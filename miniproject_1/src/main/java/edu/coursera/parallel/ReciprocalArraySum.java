@@ -165,9 +165,11 @@ public final class ReciprocalArraySum {
         int mid = input.length/2;
         ReciprocalArraySumTask lower = new ReciprocalArraySumTask(0,mid,input);
         ReciprocalArraySumTask high = new ReciprocalArraySumTask(mid,input.length,input);
-        ForkJoinPool.commonPool().invoke(lower);
-        ForkJoinPool.commonPool().invoke(high);
-
+//        ForkJoinPool.commonPool().invoke(lower);
+//        ForkJoinPool.commonPool().invoke(high);
+        lower.fork();
+        high.compute();
+        lower.join();
         double sum = lower.getValue()+high.getValue();
 
         return sum;
@@ -186,7 +188,14 @@ public final class ReciprocalArraySum {
     protected static double parManyTaskArraySum(final double[] input,
             final int numTasks) {
         double sum = 0;
-        ForkJoinTask.invokeAll();
+        ForkJoinPool pool = new ForkJoinPool(numTasks);
+        for(int i = 0; i< numTasks;i++){
+            int low = getChunkStartInclusive(i,numTasks,input.length);
+            int high = getChunkEndExclusive(i,numTasks,input.length);
+            ReciprocalArraySumTask task = new ReciprocalArraySumTask(low,high,input);
+            pool.invoke(task);
+            sum += task.value;
+        }
 
         return sum;
     }
