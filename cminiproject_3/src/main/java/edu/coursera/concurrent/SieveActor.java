@@ -19,6 +19,7 @@ public final class SieveActor extends Sieve {
      */
     @Override
     public int countPrimes(final int limit) {
+
         throw new UnsupportedOperationException();
     }
 
