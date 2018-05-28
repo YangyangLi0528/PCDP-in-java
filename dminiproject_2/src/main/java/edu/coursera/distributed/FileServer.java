@@ -1,12 +1,8 @@
 package edu.coursera.distributed;
 
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.File;
 
 /**
  * A basic and very limited implementation of a file server that responds to GET
@@ -32,11 +28,9 @@ public final class FileServer {
          */
         while (true) {
 
-            // TODO Delete this once you start working on your solution.
-            throw new UnsupportedOperationException();
 
             // TODO 1) Use socket.accept to get a Socket object
-
+            Socket s = socket.accept();
             /*
              * TODO 2) Using Socket.getInputStream(), parse the received HTTP
              * packet. In particular, we are interested in confirming this
@@ -46,6 +40,15 @@ public final class FileServer {
              *
              *     GET /path/to/file HTTP/1.1
              */
+            InputStream stream = s.getInputStream();
+            InputStreamReader reader = new InputStreamReader(stream);
+            BufferedReader buffered = new BufferedReader(reader);
+
+            String line = buffered.readLine();
+            assert line != null;
+            assert line.startsWith("GET");
+            final String path = line.split("")[1];
+            final PCDPPath fullPath = new PCDPPath(path);
 
             /*
              * TODO 3) Using the parsed path to the target file, construct an
@@ -67,6 +70,23 @@ public final class FileServer {
              *
              * Don't forget to close the output stream.
              */
+            OutputStream out = s.getOutputStream();
+            PrintWriter printer = new PrintWriter(out);
+            if(fs.readFile(fullPath) != null){
+                printer.write("HTTP/1.0 200 OK\r\n");
+                printer.write("Server: FileServer\r\n");
+                printer.write("\r\n");
+                printer.write("FILE CONTENTS HERE\r\n");
+                printer.write(fs.readFile(fullPath)+"\r\n");
+
+            }else{
+                printer.write("HTTP/1.0 404 Not Found\r\n");
+                printer.write("Server: FileServer\r\n");
+                printer.write("\r\n");
+            }
+            printer.close();
+            s.close();
+
         }
     }
 }

@@ -2,18 +2,14 @@ package edu.coursera.distributed;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.DataOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.File;
-import java.io.PrintWriter;
 
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
-import java.net.ConnectException;
 import java.nio.channels.ClosedByInterruptException;
 
 import java.util.Map;
